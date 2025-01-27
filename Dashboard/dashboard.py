@@ -11,9 +11,9 @@ order_items_path = "Dashboard/order_items_dataset.csv"
 products_path = "Dashboard/products_dataset.csv"
 
 try:
-    # Membaca dataset
-    order_items_data = pd.read_csv(order_items_path)
-    products_data = pd.read_csv(products_path)
+    # Membaca dataset dengan menangani potensi masalah parsing
+    order_items_data = pd.read_csv(order_items_path, on_bad_lines='skip')
+    products_data = pd.read_csv(products_path, on_bad_lines='skip')
     st.success("Dataset berhasil dimuat!")
 
     # Menampilkan preview data
@@ -57,5 +57,7 @@ try:
 
 except FileNotFoundError as e:
     st.error(f"File tidak ditemukan: {e}")
+except pd.errors.EmptyDataError:
+    st.error("File kosong atau tidak memiliki data untuk diproses.")
 except Exception as e:
     st.error(f"Terjadi kesalahan: {e}")
