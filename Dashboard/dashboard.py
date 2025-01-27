@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Judul Dashboard
-st.title("Dashboard Visualisasi Data E-Commerce")
+st.title("Dashboard Visualisasi Data")
 
 # Memuat File Data
 order_items_path = "Dashboard/order_items_dataset.csv"
@@ -14,6 +14,7 @@ try:
     # Membaca dataset
     order_items_data = pd.read_csv(order_items_path)
     products_data = pd.read_csv(products_path)
+    st.success("Dataset berhasil dimuat!")
 
     # Menampilkan preview data
     st.subheader("Preview Data Order Items")
@@ -22,7 +23,19 @@ try:
     st.subheader("Preview Data Products")
     st.dataframe(products_data.head())
 
-      # Visualisasi: 10 Kategori Produk Terlaris
+    # Menampilkan informasi dataset
+    st.subheader("Informasi Dataset")
+    st.write("Order Items - Jumlah Baris dan Kolom:", order_items_data.shape)
+    st.write("Products - Jumlah Baris dan Kolom:", products_data.shape)
+
+    # Statistik deskriptif
+    st.write("Statistik Deskriptif Order Items:")
+    st.write(order_items_data.describe())
+
+    st.write("Statistik Deskriptif Products:")
+    st.write(products_data.describe())
+
+    # Visualisasi: 10 Kategori Produk Terlaris
     st.subheader("Visualisasi: 10 Kategori Produk Terlaris")
     if 'product_category_name' in order_items_data.columns and 'order_item_id' in order_items_data.columns:
         top_10_products = order_items_data.groupby('product_category_name')['order_item_id'].count().nlargest(10).reset_index()
