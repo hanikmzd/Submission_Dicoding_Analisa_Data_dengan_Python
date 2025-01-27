@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Judul Dashboard
-st.title("Dashboard Visualisasi Data")
+st.title("Dashboard Visualisasi Data E-Commerce")
 
 # Memuat File Data
 order_items_path = "Dashboard/order_items_dataset.csv"
@@ -14,7 +14,6 @@ try:
     # Membaca dataset
     order_items_data = pd.read_csv(order_items_path)
     products_data = pd.read_csv(products_path)
-    st.success("Dataset berhasil dimuat!")
 
     # Menampilkan preview data
     st.subheader("Preview Data Order Items")
