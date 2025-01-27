@@ -35,11 +35,14 @@ try:
     st.write("Statistik Deskriptif Products:")
     st.write(products_data.describe())
 
-    # Visualisasi: 10 Kategori Produk Terlaris
-    st.subheader("Visualisasi: 10 Kategori Produk Terlaris")
-    if 'product_category_name' in order_items_data.columns and 'order_item_id' in order_items_data.columns:
-        top_10_products = order_items_data.groupby('product_category_name')['order_item_id'].count().nlargest(10).reset_index()
-        
+    # Memastikan kolom yang diperlukan tersedia
+    if 'product_category_name' in products_data.columns and 'product_id' in order_items_data.columns:
+        # Menggabungkan dataset untuk mendapatkan kategori produk terlaris
+        merged_data = pd.merge(order_items_data, products_data, on='product_id', how='inner')
+        top_10_products = merged_data.groupby('product_category_name')['order_item_id'].count().nlargest(10).reset_index()
+
+        # Visualisasi: 10 Kategori Produk Terlaris
+        st.subheader("Visualisasi: 10 Kategori Produk Terlaris")
         fig, ax = plt.subplots(figsize=(12, 6))
         bars = ax.barh(top_10_products['product_category_name'], top_10_products['order_item_id'], color='skyblue')
         ax.set_xlabel('Jumlah Produk Terjual')
@@ -53,7 +56,7 @@ try:
         ax.invert_yaxis()
         st.pyplot(fig)
     else:
-        st.warning("Kolom 'product_category_name' atau 'order_item_id' tidak ditemukan dalam dataset.")
+        st.warning("Kolom yang diperlukan untuk visualisasi tidak ditemukan dalam dataset.")
 
 except FileNotFoundError as e:
     st.error(f"File tidak ditemukan: {e}")
