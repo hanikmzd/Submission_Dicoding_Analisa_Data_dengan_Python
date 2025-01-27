@@ -29,7 +29,7 @@ try:
         if merged_data.empty:
             raise ValueError("Data hasil penggabungan kosong. Pastikan data memiliki kecocokan kolom 'product_id'.")
 
-        top_10_products = merged_data.groupby('product_category_name')['order_item_id'].sum().nlargest(10).reset_index()
+        top_10_products = merged_data.groupby('product_category_name')['order_item_id'].count().nlargest(10).reset_index()
 
         # Visualisasi: 10 Kategori Produk Terlaris
         st.subheader("10 Kategori Produk Terlaris")
