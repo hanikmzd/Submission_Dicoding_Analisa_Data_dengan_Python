@@ -18,27 +18,6 @@ try:
     if order_items_data.empty or products_data.empty:
         raise ValueError("Salah satu file atau keduanya kosong.")
 
-    st.success("Dataset berhasil dimuat!")
-
-    # Menampilkan preview data
-    st.subheader("Preview Data Order Items")
-    st.dataframe(order_items_data.head())
-
-    st.subheader("Preview Data Products")
-    st.dataframe(products_data.head())
-
-    # Menampilkan informasi dataset
-    st.subheader("Informasi Dataset")
-    st.write("Order Items - Jumlah Baris dan Kolom:", order_items_data.shape)
-    st.write("Products - Jumlah Baris dan Kolom:", products_data.shape)
-
-    # Statistik deskriptif
-    st.write("Statistik Deskriptif Order Items:")
-    st.write(order_items_data.describe())
-
-    st.write("Statistik Deskriptif Products:")
-    st.write(products_data.describe())
-
     # Memastikan kolom yang diperlukan tersedia
     if 'product_category_name' in products_data.columns and 'product_id' in order_items_data.columns:
         # Menggabungkan dataset untuk mendapatkan kategori produk terlaris
