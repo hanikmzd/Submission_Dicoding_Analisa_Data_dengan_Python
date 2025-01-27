@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Judul Dashboard
-st.title("Dashboard Visualisasi Data")
+st.title("Dashboard Visualisasi Data E-Commerce")
 
 # Memuat File Data
 order_items_path = "Dashboard/order_items_dataset.csv"
@@ -29,7 +29,7 @@ try:
         top_10_products = merged_data.groupby('product_category_name')['order_item_id'].count().nlargest(10).reset_index()
 
         # 10 Kategori Produk Terlaris
-        st.subheader("Visualisasi: 10 Kategori Produk Terlaris")
+        st.subheader("10 Kategori Produk Terlaris")
         fig, ax = plt.subplots(figsize=(12, 6))
         bars = ax.barh(top_10_products['product_category_name'], top_10_products['order_item_id'], color='skyblue')
         ax.set_xlabel('Jumlah Produk Terjual')
@@ -44,7 +44,7 @@ try:
         st.pyplot(fig)
 
         # Tren Jumlah Order Item per Bulan
-        st.subheader("Visualisasi: Tren Jumlah Order Item per Bulan")
+        st.subheader("Tren Jumlah Order Item per Bulan")
         merged_data['shipping_limit_date'] = pd.to_datetime(merged_data['shipping_limit_date'])
         merged_data['year_month'] = merged_data['shipping_limit_date'].dt.to_period('M')
         order_trend = merged_data.groupby('year_month')['order_item_id'].count().reset_index()
@@ -63,7 +63,7 @@ try:
         st.pyplot(fig)
 
         # Tren Penjualan per Bulan
-        st.subheader("Visualisasi: Tren Penjualan per Bulan")
+        st.subheader("Tren Penjualan per Bulan")
         sales_trend = merged_data.groupby('year_month')['price'].sum().reset_index()
         sales_trend.columns = ['year_month', 'order_sum']
         sales_trend = sales_trend.sort_values(by='year_month')
