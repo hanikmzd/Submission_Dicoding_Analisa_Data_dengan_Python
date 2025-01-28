@@ -21,27 +21,6 @@ try:
     # Drop missing value pada kolom product_category_name
     products_data.drop(products_data[products_data.product_category_name.isna()].index, inplace=True)
 
-    st.success("Dataset berhasil dimuat!")
-
-    # Menampilkan preview data
-    st.subheader("Preview Data Order Items")
-    st.dataframe(order_items_data.head())
-
-    st.subheader("Preview Data Products")
-    st.dataframe(products_data.head())
-
-    # Menampilkan informasi dataset
-    st.subheader("Informasi Dataset")
-    st.write("Order Items - Jumlah Baris dan Kolom:", order_items_data.shape)
-    st.write("Products - Jumlah Baris dan Kolom:", products_data.shape)
-
-    # Statistik deskriptif
-    st.write("Statistik Deskriptif Order Items:")
-    st.write(order_items_data.describe())
-
-    st.write("Statistik Deskriptif Products:")
-    st.write(products_data.describe())
-
     # Memastikan kolom yang diperlukan tersedia
     if 'product_category_name' in products_data.columns and 'product_id' in order_items_data.columns:
         # Menggabungkan dataset untuk mendapatkan kategori produk terlaris
@@ -50,8 +29,8 @@ try:
         if merged_data.empty:
             raise ValueError("Data hasil penggabungan kosong. Pastikan data memiliki kecocokan kolom 'product_id'.")
 
-        # Visualisasi: 10 Kategori Produk Terlaris
-        st.subheader("Visualisasi: 10 Kategori Produk Terlaris")
+        # 10 Kategori Produk Terlaris
+        st.subheader("10 Kategori Produk Terlaris")
         top_10_products = merged_data.groupby('product_category_name')['order_item_id'].count().nlargest(10).reset_index()
 
         fig1, ax1 = plt.subplots(figsize=(12, 6))
@@ -78,12 +57,12 @@ try:
         merged_data['year_month'] = merged_data['shipping_limit_date'].dt.to_period('M')
 
         if option == "Tren Jumlah Order Item per Bulan":
-            # Visualisasi: Tren Jumlah Order Item per Bulan
+            # Tren Jumlah Order Item per Bulan
             order_trend = merged_data.groupby('year_month')['order_item_id'].count().reset_index()
             order_trend.columns = ['year_month', 'order_count']
             order_trend = order_trend.sort_values(by='year_month')
 
-            st.subheader("Visualisasi: Tren Jumlah Order Item per Bulan")
+            st.subheader("Tren Jumlah Order Item per Bulan")
             fig2, ax2 = plt.subplots(figsize=(10, 6))
             ax2.plot(order_trend['year_month'].astype(str), order_trend['order_count'], marker='o')
             for i in range(len(order_trend)):
@@ -96,12 +75,12 @@ try:
             st.pyplot(fig2)
 
         elif option == "Tren Penjualan per Bulan":
-            # Visualisasi: Tren Penjualan per Bulan
+            # Tren Penjualan per Bulan
             sales_trend = merged_data.groupby('year_month')['price'].sum().reset_index()
             sales_trend.columns = ['year_month', 'order_sum']
             sales_trend = sales_trend.sort_values(by='year_month')
 
-            st.subheader("Visualisasi: Tren Penjualan per Bulan")
+            st.subheader("Tren Penjualan per Bulan")
             fig3, ax3 = plt.subplots(figsize=(10, 6))
             ax3.plot(sales_trend['year_month'].astype(str), sales_trend['order_sum'], marker='o')
             for i in range(len(sales_trend)):
