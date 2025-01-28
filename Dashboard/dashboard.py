@@ -50,70 +50,68 @@ try:
         if merged_data.empty:
             raise ValueError("Data hasil penggabungan kosong. Pastikan data memiliki kecocokan kolom 'product_id'.")
 
-        # Pilihan visualisasi
-        st.subheader("Pilih Visualisasi")
+        # Visualisasi: 10 Kategori Produk Terlaris
+        st.subheader("Visualisasi: 10 Kategori Produk Terlaris")
+        top_10_products = merged_data.groupby('product_category_name')['order_item_id'].count().nlargest(10).reset_index()
+
+        fig1, ax1 = plt.subplots(figsize=(12, 6))
+        bars = ax1.barh(top_10_products['product_category_name'], top_10_products['order_item_id'], color='skyblue')
+        ax1.set_xlabel('Jumlah Produk Terjual')
+        ax1.set_ylabel('Kategori Produk')
+        ax1.set_title('10 Kategori Produk Terlaris')
+
+        # Menambahkan angka pada ujung bar
+        for bar, value in zip(bars, top_10_products['order_item_id']):
+            ax1.text(value, bar.get_y() + bar.get_height()/2, f'{value:,}', va='center', ha='left')
+
+        ax1.invert_yaxis()
+        st.pyplot(fig1)
+
+        # Pilihan visualisasi tren
+        st.subheader("Pilih Visualisasi Tren")
         option = st.selectbox(
-            "Pilih jenis data yang ingin divisualisasikan:",
-            ("10 Kategori Produk Terlaris", "Tren Jumlah Order Item per Bulan", "Tren Penjualan per Bulan")
+            "Pilih jenis tren yang ingin divisualisasikan:",
+            ("Tren Jumlah Order Item per Bulan", "Tren Penjualan per Bulan")
         )
 
-        if option == "10 Kategori Produk Terlaris":
-            top_10_products = merged_data.groupby('product_category_name')['order_item_id'].count().nlargest(10).reset_index()
+        merged_data['shipping_limit_date'] = pd.to_datetime(merged_data['shipping_limit_date'])
+        merged_data['year_month'] = merged_data['shipping_limit_date'].dt.to_period('M')
 
-            # Visualisasi: 10 Kategori Produk Terlaris
-            st.subheader("Visualisasi: 10 Kategori Produk Terlaris")
-            fig, ax = plt.subplots(figsize=(12, 6))
-            bars = ax.barh(top_10_products['product_category_name'], top_10_products['order_item_id'], color='skyblue')
-            ax.set_xlabel('Jumlah Produk Terjual')
-            ax.set_ylabel('Kategori Produk')
-            ax.set_title('10 Kategori Produk Terlaris')
-
-            # Menambahkan angka pada ujung bar
-            for bar, value in zip(bars, top_10_products['order_item_id']):
-                ax.text(value, bar.get_y() + bar.get_height()/2, f'{value:,}', va='center', ha='left')
-
-            ax.invert_yaxis()
-            st.pyplot(fig)
-
-        elif option == "Tren Jumlah Order Item per Bulan":
+        if option == "Tren Jumlah Order Item per Bulan":
             # Visualisasi: Tren Jumlah Order Item per Bulan
-            merged_data['shipping_limit_date'] = pd.to_datetime(merged_data['shipping_limit_date'])
-            merged_data['year_month'] = merged_data['shipping_limit_date'].dt.to_period('M')
             order_trend = merged_data.groupby('year_month')['order_item_id'].count().reset_index()
             order_trend.columns = ['year_month', 'order_count']
             order_trend = order_trend.sort_values(by='year_month')
 
             st.subheader("Visualisasi: Tren Jumlah Order Item per Bulan")
-            fig, ax = plt.subplots(figsize=(10, 6))
-            ax.plot(order_trend['year_month'].astype(str), order_trend['order_count'], marker='o')
+            fig2, ax2 = plt.subplots(figsize=(10, 6))
+            ax2.plot(order_trend['year_month'].astype(str), order_trend['order_count'], marker='o')
             for i in range(len(order_trend)):
-                ax.text(x=order_trend['year_month'].astype(str).iloc[i], y=order_trend['order_count'].iloc[i], 
+                ax2.text(x=order_trend['year_month'].astype(str).iloc[i], y=order_trend['order_count'].iloc[i], 
                         s=str(order_trend['order_count'].iloc[i]), ha='center', va='bottom', fontsize=9, color='blue')
-            ax.set_xlabel('Bulan dan Tahun')
-            ax.set_ylabel('Jumlah Order Item')
-            ax.set_title('Tren Jumlah Order Item per Bulan')
-            ax.tick_params(axis='x', rotation=45)
-            st.pyplot(fig)
+            ax2.set_xlabel('Bulan dan Tahun')
+            ax2.set_ylabel('Jumlah Order Item')
+            ax2.set_title('Tren Jumlah Order Item per Bulan')
+            ax2.tick_params(axis='x', rotation=45)
+            st.pyplot(fig2)
 
         elif option == "Tren Penjualan per Bulan":
             # Visualisasi: Tren Penjualan per Bulan
-            merged_data['shipping_limit_date'] = pd.to_datetime(merged_data['shipping_limit_date'])
-            merged_data['year_month'] = merged_data['shipping_limit_date'].dt.to_period('M')
             sales_trend = merged_data.groupby('year_month')['price'].sum().reset_index()
             sales_trend.columns = ['year_month', 'order_sum']
             sales_trend = sales_trend.sort_values(by='year_month')
 
             st.subheader("Visualisasi: Tren Penjualan per Bulan")
-            fig, ax = plt.subplots(figsize=(10, 6))
-            ax.plot(sales_trend['year_month'].astype(str), sales_trend['order_sum'], marker='o')
+            fig3, ax3 = plt.subplots(figsize=(10, 6))
+            ax3.plot(sales_trend['year_month'].astype(str), sales_trend['order_sum'], marker='o')
             for i in range(len(sales_trend)):
-                ax.text(x=sales_trend['year_month'].astype(str).iloc[i], y=sales_trend['order_sum'].iloc[i], 
+                ax3.text(x=sales_trend['year_month'].astype(str).iloc[i], y=sales_trend['order_sum'].iloc[i], 
                         s=f"{sales_trend['order_sum'].iloc[i]:,.2f}", ha='center', va='bottom', fontsize=9, color='blue')
-            ax.set_xlabel('Bulan dan Tahun')
-            ax.set_ylabel('Total Penjualan')
-            ax.set_title('Tren Penjualan per Bulan')
-            ax.tick_params(axis='x', rotation=45)
-            st.pyplot(fig)
+            ax3.set_xlabel('Bulan dan Tahun')
+            ax3.set_ylabel('Total Penjualan')
+            ax3.set_title('Tren Penjualan per Bulan')
+            ax3.tick_params(axis='x', rotation=45)
+            st.pyplot(fig3)
 
     else:
         st.warning("Kolom yang diperlukan untuk visualisasi tidak ditemukan dalam dataset.")
